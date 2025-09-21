@@ -12,13 +12,13 @@ def session(hands=100, player_1=100, player_2=100):
     
     for _ in range(hands):
         change = np.random.choice(outcomes, p=probs)
-        print(change)
+        print(change, outcomes[-1])
         if (change > 0): 
+            if change == outcomes[-1]: 
+                change = min(stack_p1, stack_p2)
+                print("CHANGE:", change)
             stack_p1 += change
-            stack_p2 -= change
-            # historial_p1.append(stack_p1)
-            # historial_p2.append(stack_p2)
-            # outcomes[-1] = stack_p1
+            stack_p2 -= change 
         else: 
             stack_p1 += change
             stack_p2 -= change
