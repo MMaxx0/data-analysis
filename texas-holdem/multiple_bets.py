@@ -16,15 +16,15 @@ def session(hands=100, player_1=100, player_2=100):
         if (change > 0): 
             stack_p1 += change
             stack_p2 -= change
-            historial_p1.append(stack_p1)
-            historial_p2.append(stack_p2)
-            outcomes[-1] = stack_p1
+            # historial_p1.append(stack_p1)
+            # historial_p2.append(stack_p2)
+            # outcomes[-1] = stack_p1
         else: 
-            stack_p1 -= change
-            stack_p2 += change
-            historial_p1.append(stack_p1)
-            historial_p2.append(stack_p2)
-            outcomes[-1] = stack_p1
+            stack_p1 += change
+            stack_p2 -= change
+        historial_p1.append(stack_p1)
+        historial_p2.append(stack_p2)
+        outcomes[-1] = stack_p1
         
         if stack_p1 <= 0 or stack_p2 <= 0:  
             break
