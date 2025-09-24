@@ -31,10 +31,9 @@ def session(hands=100, player_1=100, player_2=100):
         
         if stack_p1 <= 0 or stack_p2 <= 0:  
             break
-    
     return(wins_p1, wins_p2)
 
-# 🔹 Simulation
+# Simulation
 num_sessions = 10000
 wins_p1_list = []
 wins_p2_list = []
@@ -60,8 +59,13 @@ print("Player 2:", total_wins_p2)
 expected_p1 = total_wins_p1 / handsplayed
 expected_p2 = total_wins_p2 / handsplayed
 
-var_p1 = np.var(wins_p1_arr / handsplayed, ddof=1)
-var_p2 = np.var(wins_p2_arr / handsplayed, ddof=1)
+# Conversion of expected values per hand, for variance.
+p1_per_hand_session = np.array([w / (w + l) for w, l in zip(wins_p1_list, wins_p2_list)])
+p2_per_hand_session = np.array([w / (w + l) for w, l in zip(wins_p2_list, wins_p1_list)])
+
+var_p1 = np.var(p1_per_hand_session, ddof=1)
+var_p2 = np.var(p2_per_hand_session, ddof=1)
+
 print("\nExpected probability of winning a hand:")
 print("Player 1:", expected_p1)
 print("Player 2:", expected_p2)
