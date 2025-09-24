@@ -47,3 +47,9 @@ for _ in range(10000):
 print("\nTotal wins across 10000 sessions:")
 print("Player 1:", total_wins_p1)
 print("Player 2:", total_wins_p2)
+
+print("\nExpected wins per session:")
+ev1 = total_wins_p1 / 10000
+ev2 = total_wins_p2 / 10000
+print("Player 1:", ev1)
+print("Player 2:", ev2)
