@@ -56,3 +56,65 @@ def run_simulation(session_count=10000):
     print(f"Average won hands per session: {average_won_hands}")
     print(f"Simulated variance: {simulated_variance:.4f}")
     print(f"Total bankruptcies: {total_bankruptcies} out of {session_count} sessions")
+
+    fig, axs = plt.subplots(2, 1, figsize=(12, 10))
+
+    axs[0].bar(range(session_count), won_hands_counts, width=1)
+    axs[0].set_xlabel("Session")
+    axs[0].set_ylabel("Won Hands")
+    axs[0].set_title("Won Hands per Session")
+    theoretical_text = f"""**Theoretical Values**\nMean: {expected_value:.4f}\nVariance: {variance:.4f}\nBankruptcy probability (0.5^100): {total_bankruptcy_probability:.2e}"""
+    simulated_text = f"""**Simulated Values**\nMean: {average_won_hands:.4f}\nVariance: {simulated_variance:.4f}\nBankruptcies: {total_bankruptcies}"""
+    add_stats_box(axs[0], 0.98, 0.98, theoretical_text, "#e0e0ff", "navy")
+    add_stats_box(axs[0], 0.80, 0.98, simulated_text, "#ffe0e0", "darkred")
+    axs[1].hist(
+        won_hands_counts, bins="auto", color="skyblue", edgecolor="black", alpha=0.7
+    )
+    axs[1].axvline(
+        expected_value,
+        color="red",
+        linestyle="dashed",
+        linewidth=2,
+        label="Theoretical Mean",
+    )
+    std_dev = simulated_variance**0.5
+    mean = average_won_hands
+    axs[1].axvline(
+        mean + std_dev,
+        color="green",
+        linestyle="dotted",
+        linewidth=2,
+        label="+1 Std Dev",
+    )
+    axs[1].axvline(
+        mean - std_dev,
+        color="green",
+        linestyle="dotted",
+        linewidth=2,
+        label="-1 Std Dev",
+    )
+    axs[1].set_xlabel("Won Hands per Session")
+    axs[1].set_ylabel("Number of Sessions")
+    axs[1].set_title("Distribution of Won Hands per Session")
+    axs[1].grid(axis="y", linestyle="--", alpha=0.7)
+    axs[1].legend()
+    add_stats_box(axs[1], 0.98, 0.98, theoretical_text, "#e0e0ff", "navy")
+    add_stats_box(axs[1], 0.80, 0.98, simulated_text, "#ffe0e0", "darkred")
+    plt.tight_layout()
+    plt.show()
+
+
+def add_stats_box(ax, x, y, text, color, edge):
+    ax.text(
+        x,
+        y,
+        text,
+        transform=ax.transAxes,
+        fontsize=10,
+        va="top",
+        ha="right",
+        bbox=dict(boxstyle="round,pad=0.3", fc=color, ec=edge, lw=1),
+    )
+
+
+run_simulation()
