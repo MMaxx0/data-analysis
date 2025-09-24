@@ -32,6 +32,18 @@ def session(hands=100, player_1=100, player_2=100):
         if stack_p1 <= 0 or stack_p2 <= 0:  
             break
     
-    print ("\nPlayer 1:","\nPartidas ganadas:", wins_p1, "\nHistorial:", np.array(historial_p1), "\n", "\nPlayer 2:", "\nPartidas ganadas:", wins_p2, np.array(historial_p2), )
+    return(wins_p1, wins_p2)
 
-result = session()
+total_wins_p1 = 0
+total_wins_p2 = 0
+
+for _ in range(10000): 
+    result = session()
+    wins_p1 = result[0]
+    wins_p2 = result[1]
+    total_wins_p1 += wins_p1
+    total_wins_p2 += wins_p2
+
+print("\nTotal wins across 10000 sessions:")
+print("Player 1:", total_wins_p1)
+print("Player 2:", total_wins_p2)
