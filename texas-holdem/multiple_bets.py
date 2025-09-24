@@ -34,22 +34,38 @@ def session(hands=100, player_1=100, player_2=100):
     
     return(wins_p1, wins_p2)
 
+# 🔹 Simulation
+num_sessions = 10000
+wins_p1_list = []
+wins_p2_list = []
 total_wins_p1 = 0
 total_wins_p2 = 0
 
-for _ in range(10000): 
-    result = session()
-    wins_p1 = result[0]
-    wins_p2 = result[1]
+for _ in range(num_sessions): 
+    wins_p1, wins_p2 = session()
+    wins_p1_list.append(wins_p1)
+    wins_p2_list.append(wins_p2)
     total_wins_p1 += wins_p1
     total_wins_p2 += wins_p2
 
-print("\nTotal wins across 10000 sessions:")
+wins_p1_arr = np.array(wins_p1_list)
+wins_p2_arr = np.array(wins_p2_list)
+
+handsplayed = total_wins_p1 + total_wins_p2
+
+print(f"\nTotal wins across {handsplayed} hands (10000 sessions):")
 print("Player 1:", total_wins_p1)
 print("Player 2:", total_wins_p2)
 
-print("\nExpected wins per session:")
-ev1 = total_wins_p1 / 10000
-ev2 = total_wins_p2 / 10000
-print("Player 1:", ev1)
-print("Player 2:", ev2)
+expected_p1 = total_wins_p1 / handsplayed
+expected_p2 = total_wins_p2 / handsplayed
+
+var_p1 = np.var(wins_p1_arr / handsplayed, ddof=1)
+var_p2 = np.var(wins_p2_arr / handsplayed, ddof=1)
+print("\nExpected probability of winning a hand:")
+print("Player 1:", expected_p1)
+print("Player 2:", expected_p2)
+
+print("\nVariance of wins per hand:")
+print("Player 1:", var_p1)
+print("Player 2:", var_p2)
