@@ -64,11 +64,11 @@ def run_simulation(session_count=10000):
 
     # Simulated variance
     mean_per_session = total_won_hands / session_count
-    per_session_variance = sum(
+    squared_diffs = [
         (session_wins - mean_per_session) ** 2 for session_wins in won_hands_counts
-    ) / (session_count - 1)
-
-    simulated_variance = sum(won_hands_counts)
+    ]
+    per_session_variance = sum(squared_diffs) / (session_count - 1)
+    simulated_variance = per_session_variance * session_count
 
     print(f"Total hands played: {total_hands_played}")
     print(f"Theoretical Expected value (hands won): {theoretical_expected_value}")
