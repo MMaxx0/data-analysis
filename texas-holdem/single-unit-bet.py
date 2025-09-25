@@ -1,15 +1,18 @@
 import random
 import matplotlib.pyplot as plt
 
+session_length = 100  # Each session has 100 hands
+
 
 def run_session():
     session_data = {
         "player_balance": 100,
         "won_hands": 0,
         "went_bankrupt": False,
+        "hands_played": 0,
     }
 
-    for _ in range(100):
+    for _ in range(session_length):
         choice = random.choice(["win", "lose"])
         bet = 1
 
@@ -18,6 +21,8 @@ def run_session():
             session_data["won_hands"] += 1
         else:
             session_data["player_balance"] -= bet
+
+        session_data["hands_played"] += 1
 
         if session_data["player_balance"] <= 0:
             session_data["went_bankrupt"] = True
@@ -28,66 +33,85 @@ def run_session():
 
 def run_simulation(session_count=10000):
     total_won_hands = 0
+    total_hands_played = 0
     won_hands_counts = []
     total_bankruptcies = 0
-
-    # Following the Binomial distribution
-    n = 100  # sequence of n independent yes/no experiments
-    p = 0.5  # Probability of yes
-    expected_value = n * p
-    variance = n * p * (1 - p)
-    total_bankruptcy_probability = (1 - p) ** n
 
     for _ in range(session_count):
         session_stats = run_session()
 
         total_won_hands += session_stats["won_hands"]
+        total_hands_played += session_stats["hands_played"]
         won_hands_counts.append(session_stats["won_hands"])
 
         if session_stats["went_bankrupt"]:
             total_bankruptcies += 1
 
-    average_won_hands = total_won_hands / session_count
+    # Following the Binomial distribution
+    n = total_hands_played  # sequence of n independent yes/no experiments
+    n_per_session = session_length  # per session
+    p = 0.5  # Probability of yes
 
-    mean = sum(won_hands_counts) / len(won_hands_counts)
-    squared_diffs = [(x - mean) ** 2 for x in won_hands_counts]
-    simulated_variance = sum(squared_diffs) / (len(won_hands_counts) - 1)
+    # Theoretical values
+    # All hands considered values
+    theoretical_expected_value = n * p
+    theoretical_variance = n * p * (1 - p)
+    # Per-session values (n=100 (session length), p=0.5)
+    per_session_theoretical_expected_value = n_per_session * p  # 50
+    per_session_theoretical_variance = n_per_session * p * (1 - p)  # 25
+    # Bankruptcy
+    per_session_bankruptcy_probability = (1 - p) ** n_per_session
 
-    print(f"Average won hands per session: {average_won_hands}")
+    # Simulated variance
+    mean_per_session = total_won_hands / session_count
+    per_session_variance = sum(
+        (session_wins - mean_per_session) ** 2 for session_wins in won_hands_counts
+    ) / (session_count - 1)
+
+    simulated_variance = sum(won_hands_counts)
+
+    print(f"Total hands played: {total_hands_played}")
+    print(f"Theoretical Expected value (hands won): {theoretical_expected_value}")
+    print(f"Total hands won: {total_won_hands}")
+    print(f"Theoretical variance: {theoretical_variance:.4f}")
     print(f"Simulated variance: {simulated_variance:.4f}")
+    print(
+        f"Probability of bankruptcy in a session: {per_session_bankruptcy_probability:.2e}"
+    )
     print(f"Total bankruptcies: {total_bankruptcies} out of {session_count} sessions")
 
+    # Plotting
     fig, axs = plt.subplots(2, 1, figsize=(12, 10))
 
     axs[0].bar(range(session_count), won_hands_counts, width=1)
     axs[0].set_xlabel("Session")
     axs[0].set_ylabel("Won Hands")
     axs[0].set_title("Won Hands per Session")
-    theoretical_text = f"""**Theoretical Values**\nMean: {expected_value:.4f}\nVariance: {variance:.4f}\nBankruptcy probability (0.5^100): {total_bankruptcy_probability:.2e}"""
-    simulated_text = f"""**Simulated Values**\nMean: {average_won_hands:.4f}\nVariance: {simulated_variance:.4f}\nBankruptcies: {total_bankruptcies}"""
+    theoretical_text = f"""**Theoretical Values**\nMean: {theoretical_expected_value:.4f}\nVariance: {theoretical_variance:.4f}\nBankruptcy probability: {per_session_bankruptcy_probability:.2e}"""
+    simulated_text = f"""**Simulated Values**\nHands won: {total_won_hands:.4f}\nVariance: {simulated_variance:.4f}\nBankruptcies: {total_bankruptcies}"""
     add_stats_box(axs[0], 0.98, 0.98, theoretical_text, "#e0e0ff", "navy")
     add_stats_box(axs[0], 0.80, 0.98, simulated_text, "#ffe0e0", "darkred")
     axs[1].hist(
         won_hands_counts, bins="auto", color="skyblue", edgecolor="black", alpha=0.7
     )
+    per_session_std_dev = per_session_variance**0.5
+
     axs[1].axvline(
-        expected_value,
+        per_session_theoretical_expected_value,
         color="red",
         linestyle="dashed",
         linewidth=2,
-        label="Theoretical Mean",
+        label="Theoretical Mean (per session)",
     )
-    std_dev = simulated_variance**0.5
-    mean = average_won_hands
     axs[1].axvline(
-        mean + std_dev,
+        mean_per_session + per_session_std_dev,
         color="green",
         linestyle="dotted",
         linewidth=2,
         label="+1 Std Dev",
     )
     axs[1].axvline(
-        mean - std_dev,
+        mean_per_session - per_session_std_dev,
         color="green",
         linestyle="dotted",
         linewidth=2,
@@ -98,8 +122,12 @@ def run_simulation(session_count=10000):
     axs[1].set_title("Distribution of Won Hands per Session")
     axs[1].grid(axis="y", linestyle="--", alpha=0.7)
     axs[1].legend()
-    add_stats_box(axs[1], 0.98, 0.98, theoretical_text, "#e0e0ff", "navy")
-    add_stats_box(axs[1], 0.80, 0.98, simulated_text, "#ffe0e0", "darkred")
+
+    theoretical_per_session_text = f"""**Theoretical (Per Session)**\nMean: {per_session_theoretical_expected_value:.4f}\nVariance: {per_session_theoretical_variance:.4f}\nBankruptcy probability: {per_session_bankruptcy_probability:.2e}"""
+    simulated_per_session_text = f"""**Simulated (Per Session)**\nMean: {mean_per_session:.4f}\nVariance: {per_session_variance:.4f}\nBankruptcies: {total_bankruptcies}"""
+
+    add_stats_box(axs[1], 0.98, 0.98, theoretical_per_session_text, "#e0e0ff", "navy")
+    add_stats_box(axs[1], 0.80, 0.98, simulated_per_session_text, "#ffe0e0", "darkred")
     plt.tight_layout()
     plt.show()
 
