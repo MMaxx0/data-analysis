@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 # Possible results and probabilities
 outcomes = np.array([1, -5, 5, -100])   
@@ -73,3 +74,27 @@ print("Player 2:", expected_p2)
 print("\nVariance of wins per hand:")
 print("Player 1:", var_p1)
 print("Player 2:", var_p2)
+
+# --- 1) Hands won per session ---
+plt.figure(figsize=(12, 6))
+plt.plot(wins_p1_arr, label='Player 1', alpha=0.6)
+plt.plot(wins_p2_arr, label='Player 2', alpha=0.6)
+plt.xlabel("Session")
+plt.ylabel("Hands won")
+plt.title("Hands won per session for each player")
+plt.legend()
+plt.show()
+
+# --- 2) Expected value for each player ---
+plt.figure(figsize=(8, 6))
+plt.bar(['Player 1', 'Player 2'], [expected_p1, expected_p2], color=['blue', 'orange'])
+plt.ylabel("Expected probability of winning a hand")
+plt.title("Expected value per hand for each player")
+plt.show()
+
+# --- 3) Variance for each player ---
+plt.figure(figsize=(8, 6))
+plt.bar(['Player 1', 'Player 2'], [var_p1, var_p2], color=['blue', 'orange'])
+plt.ylabel("Variance per hand")
+plt.title("Variance of wins per hand for each player")
+plt.show()
