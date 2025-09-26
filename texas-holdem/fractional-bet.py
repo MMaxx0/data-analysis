@@ -57,7 +57,8 @@ def run_simulation(session_count=10000):
             total_bankruptcies += 1
 
     # Following the Binomial distribution
-    n = 100 # sequence of n independent yes/no experiments
+    # Use actual average hands per session to account for bankruptcies
+    n = total_hands_played / session_count  # actual average hands per session
     p = 0.5  # Probability of yes
 
     # Theoretical values
@@ -72,13 +73,13 @@ def run_simulation(session_count=10000):
         (session_wins - mean_per_session) ** 2 for session_wins in won_hands_counts
     ]
     per_session_variance = sum(squared_diffs) / (session_count - 1)
-    simulated_variance = per_session_variance * session_count
 
     print(f"Total hands played: {total_hands_played}")
-    print(f"Theoretical Expected value (hands won): {per_session_theoretical_expected_value}")
+    print(f"Theoretical Expected value: {per_session_theoretical_expected_value}")
     print(f"Total hands won: {total_won_hands}")
+    print(f"Simulated Expected value: {mean_per_session:.4f}")
     print(f"Theoretical variance: {per_session_theoretical_variance:.4f}")
-    print(f"Simulated variance: {simulated_variance:.4f}")
+    print(f"Simulated variance: {per_session_variance:.4f}")
     print(
         f"Probability of bankruptcy in a session: {per_session_bankruptcy_probability:.2e}"
     )
