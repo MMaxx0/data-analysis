@@ -103,22 +103,11 @@ plt.title("Expected value per hand for each player")
 plt.show()
 
 #  --- 3) Histogram distribution plot ---
-# Option B (recommended): histograms in counts + scaled theoretical pdf for Player 1
 fig, axs = plt.subplots(1, 2, figsize=(14, 6))
 
 # Player 1 counts histogram
-counts, bins, _ = axs[0].hist(wins_p1_arr, bins="auto", color="skyblue",
-                              edgecolor="black", alpha=0.7)
-bin_width = bins[1] - bins[0]
-
-# Scale the pdf so area under pdf matches total count * bin_width -> pdf*len*bin_width -> counts scale
-x = np.linspace(0, wins_p1_arr.max(), 500)
-mu = 5.95
-sigma = np.sqrt(471.5475)
-pdf = norm.pdf(x, mu, sigma)
-scaled_pdf = pdf * len(wins_p1_arr) * bin_width
-
-axs[0].plot(x, scaled_pdf, "r-", lw=2, label="Theoretical Normal (scaled)")
+axs[0].hist(wins_p1_arr, bins="auto", color="skyblue",
+            edgecolor="black", alpha=0.7)
 axs[0].axvline(np.mean(wins_p1_arr), color="red", linestyle="dashed", linewidth=2, label="Sim Mean")
 axs[0].axvline(np.mean(wins_p1_arr) + np.std(wins_p1_arr), color="green", linestyle="dotted", linewidth=2, label="+1 Std Dev")
 axs[0].axvline(np.mean(wins_p1_arr) - np.std(wins_p1_arr), color="green", linestyle="dotted", linewidth=2, label="-1 Std Dev")
@@ -128,7 +117,7 @@ axs[0].set_ylabel("Number of Sessions")
 axs[0].legend()
 axs[0].grid(axis="y", linestyle="--", alpha=0.7)
 
-# Player 2 counts histogram (keep counts)
+# Player 2 counts histogram
 axs[1].hist(wins_p2_arr, bins="auto", color="orange", edgecolor="black", alpha=0.7)
 axs[1].axvline(np.mean(wins_p2_arr), color="red", linestyle="dashed", linewidth=2, label="Sim Mean")
 axs[1].axvline(np.mean(wins_p2_arr) + np.std(wins_p2_arr), color="green", linestyle="dotted", linewidth=2, label="+1 Std Dev")
@@ -140,3 +129,4 @@ axs[1].grid(axis="y", linestyle="--", alpha=0.7)
 
 plt.tight_layout()
 plt.show()
+
