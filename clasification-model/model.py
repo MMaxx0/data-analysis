@@ -1,5 +1,7 @@
 import pandas as pd
 import zipfile
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # ZIP route
 zip_path = "poker+hand.zip"
@@ -19,16 +21,34 @@ with zipfile.ZipFile(zip_path) as z:
 print("\n",train_df.head())
 print("\n", test_df.head())
 
-# Dimensiones + Tipos de datos
-# print("\nTrain shape:", train_df.shape)
-# print("\nTest shape:", test_df.shape)
-# X filas, 11 Columnas (Test > Training)
-
-# print(f"\n{train_df.dtypes}")
-# All = int64, dtype: object
-
-# Estadísticas descriptivas
+# --- EDA  ---
 pd.set_option('display.max_columns', None)
-print("\n", train_df.describe())
+print("\nDtypes:\n", train_df.dtypes)
+print("\nDistribución objetivo (train):")
+print(train_df['hand'].value_counts())
+print("\nDistribución relativa (train):")
+print(train_df['hand'].value_counts(normalize=True))
+
+# Visualizaciones (frecuencias de clases)
+plt.figure(figsize=(8,4))
+sns.countplot(x='hand', data=train_df)
+plt.title("Frecuencia por clase (train)")
+plt.show()
+
+# Distribución de rangos (valores de carta) y palos
+val_cols = ['C1','C2','C3','C4','C5']
+suit_cols = ['S1','S2','S3','S4','S5']
+
+plt.figure(figsize=(10,4))
+sns.histplot(train_df[val_cols].values.ravel(), bins=13, kde=False)
+plt.title("Distribución de valores de cartas (todas las posiciones)")
+plt.xlabel("Valor (1=ace, ... 13=king)")
+plt.show()
+
+plt.figure(figsize=(6,3))
+sns.countplot(x=train_df[suit_cols].values.ravel())
+plt.title("Distribución de palos (todas las posiciones)")
+plt.show()
+
 
 
