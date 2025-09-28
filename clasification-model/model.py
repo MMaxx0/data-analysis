@@ -20,7 +20,15 @@ print("\n",train_df.head())
 print("\n", test_df.head())
 
 # Dimensiones + Tipos de datos
-print("\nTrain shape:", train_df.shape)
-print("\nTest shape:", test_df.shape)
-# X filas, 11 Columnas
-print(f"\n{train_df.dtypes}")
+# print("\nTrain shape:", train_df.shape)
+# print("\nTest shape:", test_df.shape)
+# X filas, 11 Columnas (Test > Training)
+
+# print(f"\n{train_df.dtypes}")
+# All = int64, dtype: object
+
+# Estadísticas descriptivas
+pd.set_option('display.max_columns', None)
+print("\n", train_df.describe())
+
+
