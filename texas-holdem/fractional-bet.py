@@ -65,15 +65,34 @@ def run_simulation(count=10000):
     theoretical_variance = n * p * (1 - p)
 
     # Simulated values
-    mean = sum(won_hands_per_session) / count
+    mean = (total_won_hands / total_hands_played) * 100
     sum_squared_deviations = sum((x - mean) ** 2 for x in won_hands_per_session)
     variance = sum_squared_deviations / (count - 1)
 
     print(f"Total hands played: {total_hands_played}")
+    print(f"Total hands won: {total_won_hands}")
     print(f"Theoretical Mean: {theoretical_mean}")
     print(f"Theoretical Variance: {theoretical_variance}")
     print(f"Simulated Mean: {mean}")
     print(f"Simulated Variance: {variance}")
+    print(f"Total bankruptcies: {total_bankruptcies} out of {count} sessions")
+
+    fig, axs = plt.subplots(1, 1, figsize=(12, 10))
+
+    axs.bar(range(count), won_hands_per_session, width=1)
+    axs.set_xlabel("Session")
+    axs.set_ylabel("Won Hands")
+    axs.set_title("Won Hands per Session")
+    general_stats_text = f"""**General Stats**\nTotal Hands Played: {total_hands_played}\nTotal Hands Won: {total_won_hands}\nTotal Bankruptcies: {total_bankruptcies}"""
+    theoretical_text = f"""**Theoretical**\nMean: {theoretical_mean:.4f}\nVariance: {theoretical_variance:.4f}\n"""
+    simulated_text = (
+        f"""**Simulated**\nMean: {mean:.4f}\nVariance: {variance:.4f}\n"""
+    )
+    add_stats_box(axs, 0.20, 0.98, general_stats_text, "#e0ffe0", "green")
+    add_stats_box(axs, 0.32, 0.98, theoretical_text, "#e0e0ff", "navy")
+    add_stats_box(axs, 0.445, 0.98, simulated_text, "#ffe0e0", "darkred")
+    plt.tight_layout()
+    plt.show()
 
     # Plotting
     fig, axs = plt.subplots(1, 1, figsize=(12, 10))
